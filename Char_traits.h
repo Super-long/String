@@ -2,7 +2,6 @@
 #define CHAR_TRAITS_H_
 
 namespace String{
-
     template<typename type>
         struct char_traits_{
             using char_type = type;
