@@ -1,6 +1,9 @@
 #ifndef _ITERATOR_H_
 #define _ITERATOR_H_
 
+#include <bits/cpp_type_traits.h>
+#include <ext/type_traits.h>
+
 namespace String{
     template<typename Iterator_, typename Container_>
     class Base_Iterator{
@@ -13,7 +16,7 @@ namespace String{
             //This is only for strings.
             //using iterator_category = random_access_itreator_tag;
 
-            using Iterator_					iterator_type;
+            using Iterator_ =				iterator_type;
             using iterator_category = typename Iterator_traits::iterator_category;
             using value_type = typename Iterator_traits::value_type;
             using difference_type = typename Iterator_traits::difference_type;
@@ -37,9 +40,85 @@ namespace String{
 
             explicit Base_Iterator(const Iterator_& para) noexcept
                 :Value_(para) {}
-            
-            
+
+            //Allow iterator to const_iterator conversion.
+            //还是没搞明白为什么可以转换
+            template<typename _Iter>
+            Base_Iterator(const Base_Iterator<_Iter, 
+                    typename enable_if<
+                    (std::__are_same<_Iter, typename _Container::pointer>::__value),
+                    _Container>::type>& __i) noexcept
+            : Value_(__i.base()) {}
+
+            //Following is Functional function.
+
+            reference
+            operator*() const noexcept{
+                return *Value_;
+            }
+
+            pointer
+            operator->() const noexcept{
+                return Value_;
+            }
+
+            Base_Iterator&
+            operator++() noexcept{
+                ++Value_;
+                return *this;
+            }
+
+            Base_Iterator
+            operator++(int) noexcept{
+                return Base_Iterator(value_++);
+            }
+
+            Base_Iterator&
+            operator--() noexcept{
+                --Value_;
+                return *this;
+            }
+
+            Base_Iterator
+            operator--(int) noexcept{
+                return Base_Iterator(value_--);
+            }
+
+            //difference - ptrdiff_t - long int(my device)
+            //pridiff_t : Alias of one of the fundamental signed integer types.
+            reference
+            operator[](difference_type n) const noexcept{
+                return Value_[n];
+            }
+
+            Base_Iterator&
+            operator-(difference_type n) const noexcept{
+                return Base_Iterator(Value_ - n);
+            }
+
+            Base_Iterator& //没有用RVO 下去再学习学习
+            operator+(difference_type n) const noexcept{
+                return Base_Iterator(Value_ + n);
+            }
+
+            Base_Iterator&
+            operator-=(difference_type n) noexcept{
+                Value_ -= n; return *this;
+            }
+
+            Base_Iterator&
+            operator+=(difference_type n) noexcept{
+                Value_ += n; return *this;
+            }
+
+            const Iterator_& 
+            base() const noexcept{
+                return Value_;
+            }
     };
+
+    //下面的比较函数很有意思
+
 }
 
 #endif
