@@ -391,10 +391,23 @@ namespace String{
                 return iterator_(_Return_pointer());
             }
 
+            const_iterator_
+            begin() const noexcept{
+                //TODO : test for no-const conversion of const.
+                //auto x = const_iterator_(const_iterator_(_Return_pointer()));
+                return const_iterator_(_Return_pointer());
+            }
+
             iterator_
             end() noexcept{
                 return iterator_(_Return_pointer() + this->size());
             }
+
+            const_iterator_
+            end() const noexcept{
+                return const_iterator_(_Return_pointer() + this->size());
+            }
+
 
 
 
