@@ -3,20 +3,24 @@
 
 #include <bits/cpp_type_traits.h>
 #include <ext/type_traits.h>
+#include <bits/move.h>
+#include <bits/ptr_traits.h>
+#include <iterator>
 
 namespace String{
+    using std::iterator_traits;
     template<typename Iterator_, typename Container_>
     class Base_Iterator{
+            //using std::iterator_traits; //不能放在这里
         protected: //will write a reverse iterator.
             Iterator_ Value_;
-        
-            using Iterator_traits = iterator_traits<_Iterator>;
+            using Iterator_traits = iterator_traits<Iterator_>;
 
         public:
             //This is only for strings.
             //using iterator_category = random_access_itreator_tag;
 
-            using Iterator_ =				iterator_type;
+            using Iterator_type = Iterator_;
             using iterator_category = typename Iterator_traits::iterator_category;
             using value_type = typename Iterator_traits::value_type;
             using difference_type = typename Iterator_traits::difference_type;
@@ -42,13 +46,13 @@ namespace String{
                 :Value_(para) {}
 
             //Allow iterator to const_iterator conversion.
-            //还是没搞明白为什么可以转换
-            template<typename _Iter>
+            //TODO : 还是没搞明白为什么可以转换 
+            /*template<typename _Iter>
             Base_Iterator(const Base_Iterator<_Iter, 
-                    typename enable_if<
+                    typename __enable_if<
                     (std::__are_same<_Iter, typename _Container::pointer>::__value),
                     _Container>::type>& __i) noexcept
-            : Value_(__i.base()) {}
+            : Value_(__i.base()) {}*/
 
             //Following is Functional function.
 
@@ -70,7 +74,7 @@ namespace String{
 
             Base_Iterator
             operator++(int) noexcept{
-                return Base_Iterator(value_++);
+                return Base_Iterator(Value_++);
             }
 
             Base_Iterator&
@@ -81,7 +85,7 @@ namespace String{
 
             Base_Iterator
             operator--(int) noexcept{
-                return Base_Iterator(value_--);
+                return Base_Iterator(Value_--);
             }
 
             //difference - ptrdiff_t - long int(my device)
@@ -117,7 +121,91 @@ namespace String{
             }
     };
 
-    //下面的比较函数很有意思
+    //Forward iterator requirements.
+    template<typename _IteratorLhs, typename _IteratorRhs, typename _Container>
+      inline bool 
+      operator==(const Base_Iterator<_IteratorLhs,  _Container>& lhs,
+        const Base_Iterator<_IteratorRhs,_Container>& rhs) noexcept {
+            return lhs.base() == rhs.base();
+        }
+
+    template<typename _Iterator, typename _Container>
+      inline bool
+      operator==(const Base_Iterator<_Iterator,  _Container>& lhs,
+        const Base_Iterator<_Iterator,_Container>& rhs) noexcept {
+            return lhs.base() == rhs.base();
+        }
+
+    template<typename _IteratorLhs, typename _IteratorRhs, typename _Container>
+      inline bool 
+      operator!=(const Base_Iterator<_IteratorLhs,  _Container>& lhs,
+        const Base_Iterator<_IteratorRhs,_Container>& rhs) noexcept {
+            return lhs.base() != rhs.base();
+        }
+
+    template<typename _Iterator, typename _Container>
+      inline bool
+      operator!=(const Base_Iterator<_Iterator,  _Container>& lhs,
+        const Base_Iterator<_Iterator,_Container>& rhs) noexcept {
+            return lhs.base() != rhs.base();
+        }
+
+    //Random access iterator requirements.
+    template<typename _IteratorLhs, typename _IteratorRhs, typename _Container>
+      inline bool 
+      operator>(const Base_Iterator<_IteratorLhs,  _Container>& lhs,
+        const Base_Iterator<_IteratorRhs,_Container>& rhs) noexcept {
+            return lhs.base() > rhs.base();
+        }
+
+    template<typename _Iterator, typename _Container>
+      inline bool
+      operator>(const Base_Iterator<_Iterator,  _Container>& lhs,
+        const Base_Iterator<_Iterator,_Container>& rhs) noexcept {
+            return lhs.base() > rhs.base();
+        }
+
+    template<typename _IteratorLhs, typename _IteratorRhs, typename _Container>
+      inline bool 
+      operator<(const Base_Iterator<_IteratorLhs,  _Container>& lhs,
+        const Base_Iterator<_IteratorRhs,_Container>& rhs) noexcept {
+            return lhs.base() < rhs.base();
+        }
+
+    template<typename _Iterator, typename _Container>
+      inline bool
+      operator<(const Base_Iterator<_Iterator,  _Container>& lhs,
+        const Base_Iterator<_Iterator,_Container>& rhs) noexcept {
+            return lhs.base() < rhs.base();
+        }
+
+    template<typename _IteratorLhs, typename _IteratorRhs, typename _Container>
+      inline bool 
+      operator>=(const Base_Iterator<_IteratorLhs,  _Container>& lhs,
+        const Base_Iterator<_IteratorRhs,_Container>& rhs) noexcept {
+            return lhs.base() >= rhs.base();
+        }
+
+    template<typename _Iterator, typename _Container>
+      inline bool
+      operator>=(const Base_Iterator<_Iterator,  _Container>& lhs,
+        const Base_Iterator<_Iterator,_Container>& rhs) noexcept {
+            return lhs.base() >= rhs.base();
+        }
+
+    template<typename _IteratorLhs, typename _IteratorRhs, typename _Container>
+      inline bool 
+      operator<=(const Base_Iterator<_IteratorLhs,  _Container>& lhs,
+        const Base_Iterator<_IteratorRhs,_Container>& rhs) noexcept {
+            return lhs.base() <= rhs.base();
+        }
+
+    template<typename _Iterator, typename _Container>
+      inline bool
+      operator<=(const Base_Iterator<_Iterator,  _Container>& lhs,
+        const Base_Iterator<_Iterator,_Container>& rhs) noexcept {
+            return lhs.base() <= rhs.base();
+        }
 
 }
 

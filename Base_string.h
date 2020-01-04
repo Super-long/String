@@ -9,6 +9,7 @@
 #include<ext/atomicity.h>
 #include<ostream>
 #include<istream>
+#include"iterator.h"
 
 #include<iostream>
 using std::cout;
@@ -43,9 +44,10 @@ namespace String{
             using pointer = typename Alloc_Traits::pointer;
             using const_pointer = typename Alloc_Traits::const_pointer;
     
-            //TODU 迭代器和反向迭代器
-        
-        
+            //Iterator and reverse_Iterator.
+            using iterator_ = Base_Iterator<pointer, Basic_string>;
+            using const_iterator_ = Base_Iterator<const_pointer, Basic_string>;
+
         
         private:
             Alloc _alloc_;
@@ -178,7 +180,6 @@ namespace String{
             #endif
             //return static_cast<pointer>(initial_buf);
         }
-
 
 /*------------------------------------------------*/
         //Following is a constructor part.
@@ -315,7 +316,7 @@ namespace String{
 */
             Basic_string& 
             operator=(const Basic_string& _str){
-                if(this == &str) return *this;
+                if(this == &_str) return *this;
 
 #if __cplusplus >= 201103L
                 if(_Return_pointer() && 
@@ -336,9 +337,9 @@ namespace String{
                         _S_SetUp_date(ptr);
                         _S_SetUp_capacity(len);
                         _S_SetUp_length(len);
+                        std::__alloc_on_copy(get_allocator(), alloc);
                     }
                 }
-                std::__alloc_on_copy(get_allocator(), alloc);
 #endif
             return this->assign(_str);
             }
@@ -382,6 +383,20 @@ namespace String{
             _S_Delete();
         }
 #endif
+
+/*------------------------------------------------*/
+        //Following is iterator operation.
+            iterator_
+            begin() noexcept{
+                return iterator_(_Return_pointer());
+            }
+
+            iterator_
+            end() noexcept{
+                return iterator_(_Return_pointer() + this->size());
+            }
+
+
 
 /*------------------------------------------------*/
         //Following is a capacity function.
