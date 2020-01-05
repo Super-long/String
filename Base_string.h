@@ -43,11 +43,11 @@ namespace String{
             using const_reference = typename Alloc_Traits::const_reference;
             using pointer = typename Alloc_Traits::pointer;
             using const_pointer = typename Alloc_Traits::const_pointer;
-    
-            //Iterator and reverse_Iterator.
+
             using iterator_ = Base_Iterator<pointer, Basic_string>;
             using const_iterator_ = Base_Iterator<const_pointer, Basic_string>;
-
+            using reverse_iterator_ = Reverse_Iterator<pointer>;
+            using const_reverse_iterator_ = Reverse_Iterator<const_pointer>;
         
         private:
             Alloc _alloc_;
@@ -408,8 +408,49 @@ namespace String{
                 return const_iterator_(_Return_pointer() + this->size());
             }
 
+            reverse_iterator_
+            rbegin() noexcept {
+                return reverse_iterator_(_Return_pointer() + this->size());
+            }
 
+            const_reverse_iterator_
+            rbegin() const noexcept{
+                return const_reverse_iterator_(_Return_pointer() + this->size());
+            }
 
+            reverse_iterator_
+            rend() noexcept{
+                return reverse_iterator_(_Return_pointer());
+            }
+
+            const_reverse_iterator_
+            rend() const noexcept{
+                return const_reverse_iterator_(_Return_pointer());
+            }
+
+#if __cplusplus >= 201103L
+            //To make non-const object return const.
+            const_iterator_
+            cbegin() const noexcept{
+                return const_iterator_(this->_M_data());
+            }
+
+            const_iterator_
+            cend() const noexcept{
+                return const_iterator_(this->_M_data() + this->size());
+            }
+
+            const_reverse_iterator_
+            crbegin() const noexcept{
+                return const_reverse_iterator_(this->end());
+            }
+
+            const_reverse_iterator_
+            crend() const noexcept{
+                return const_reverse_iterator_(this->begin());
+            }
+
+#endif
 
 /*------------------------------------------------*/
         //Following is a capacity function.

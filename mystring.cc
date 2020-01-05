@@ -7,15 +7,16 @@
 
 using namespace String;
 int main(){
-    using std::cout;
+    using std::cout; 
     using std::endl;
     const char book[] = "abcdefghijklmnopqrstuvwxyzabcdefghijklmn";
     String::Basic_string<char,Char_traits<char>,std::allocator<char>> S(book);
     const String::Basic_string<char,Char_traits<char>,std::allocator<char>> T("ghijk");
     String::Basic_string<char,Char_traits<char>,std::allocator<char>> TT;
-    auto itr = S.begin();
-    const auto iitr = S.begin();
-    auto xx = T.begin();
+
+    auto one = T.rbegin();
+    auto two = T.rend();
+    cout << std::distance(S.begin(), S.end()) << endl;
     using namespace std::rel_ops;
     //if(iitr == T.begin()) cout << "hello\n";
     //if(S.begin()!=S.end()) cout << "world\n";
